@@ -33,7 +33,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
                 : "bg-transparent hover:bg-secondary"
           }
           ${size === "sm" ? "px-2 py-1" : size === "lg" ? "px-8 py-4" : "px-4 py-2"}
-          ${className ? className : ""}
+          ${className ?? ""}
         `}
         ref={ref}
         {...props}

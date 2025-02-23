@@ -1,6 +1,7 @@
 import { Button } from "./_components/button"
 import { Calendar, Eye, Facebook, Flower, Gift, HeartHandshake, Package } from "lucide-react"
 import Link from "next/link"
+import Image from "next/image"
 
 export default function LandingPage() {
   return (
@@ -32,10 +33,12 @@ export default function LandingPage() {
       <main className="flex-1">
         <section className="w-full relative h-[30vh] md:h-[50vh] lg:h-[70vh]">
           <div className="absolute inset-0 z-0">
-            <img
-              src="/homepage.svg?height=720&width=1920"
+            <Image
+              src="/homepage.svg"
               alt="Background"
               className="w-full h-full object-cover brightness-50"
+              fill
+              priority
             />
           </div>
           <div className="container mx-auto relative z-10 px-4 md:px-6 h-full flex items-center">
@@ -70,7 +73,7 @@ export default function LandingPage() {
                 </div>
                 <h3 className="text-xl font-bold">1. Check Availability</h3>
                 <p className="text-gray-500 dark:text-gray-400">
-                  Let us know your event date so we can check availability for the items you're interested in.
+                  Let us know your event date so we can check availability for the items you&apos;re interested in.
                 </p>
               </div>
               <div className="flex flex-col items-center space-y-4 text-center">
@@ -103,7 +106,7 @@ export default function LandingPage() {
                   <div className="inline-block rounded-lg bg-rose-100 px-3 py-1 text-sm">Why Choose Us</div>
                   <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">Elevate Your Event Experience</h2>
                   <p className="max-w-[600px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400">
-                    We're more than just a rental company. We're your partner in creating unforgettable moments.
+                    We&apos;re more than just a rental company. We&apos;re your partner in creating unforgettable moments.
                   </p>
                 </div>
                 <div className="grid gap-4 md:grid-cols-2">
@@ -128,12 +131,13 @@ export default function LandingPage() {
                 </div>
               </div>
               <div className="flex justify-center">
-                <img
+                <Image
                   alt="Setup showcase"
                   className="aspect-video overflow-hidden rounded-xl object-cover object-center"
-                  height="310"
+                  height={310}
+                  width={550}
                   src="/showcase.svg"
-                  width="550"
+                  priority
                 />
               </div>
             </div>
