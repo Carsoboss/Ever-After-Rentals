@@ -1,3 +1,4 @@
+import { Header } from "./_components/header"
 import { Button } from "./_components/button"
 import { Calendar, Eye, Facebook, Flower, Gift, HeartHandshake, Package } from "lucide-react"
 import Link from "next/link"
@@ -6,31 +7,8 @@ import Image from "next/image"
 export default function LandingPage() {
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="flex h-16 items-center justify-between px-4 md:px-6">
-        <Link className="flex items-center gap-2 text-lg font-semibold" href="#">
-          <Flower className="h-6 w-6" />
-          <span>Ever After Rentals</span>
-        </Link>
-        <nav className="hidden gap-6 md:flex">
-          <Link className="font-medium" href="#">
-            Home
-          </Link>
-          <Link className="font-medium" href="#">
-            Products
-          </Link>
-          <Link className="font-medium" href="#">
-            About
-          </Link>
-          <Link className="font-medium" href="#">
-            Schedule a Tour
-          </Link>
-        </nav>
-        <div className="flex gap-4">
-          <Button variant="ghost">Sign in</Button>
-          <Button className="bg-rose-300 text-white hover:bg-rose-400">Get Started</Button>
-        </div>
-      </header>
-      <main className="flex-1">
+      <Header />
+      <main className="flex-1 pt-16">
         <section className="w-full relative h-[30vh] md:h-[50vh] lg:h-[70vh]">
           <div className="absolute inset-0 z-0">
             <Image
@@ -53,7 +31,9 @@ export default function LandingPage() {
                 </p>
               </div>
               <div className="space-x-4">
-                <Button className="bg-rose-300 text-white hover:bg-rose-400">Browse Products</Button>
+                <Link href="/products">
+                  <Button className="bg-rose-300 text-white hover:bg-rose-400">Browse Products</Button>
+                </Link>
                 <Button variant="outline" className="text-white border-white hover:bg-white hover:text-gray-900">
                   Schedule a Tour
                 </Button>
@@ -131,14 +111,16 @@ export default function LandingPage() {
                 </div>
               </div>
               <div className="flex justify-center">
-                <Image
-                  alt="Setup showcase"
-                  className="aspect-video overflow-hidden rounded-xl object-cover object-center"
-                  height={310}
-                  width={550}
-                  src="/showcase.svg"
-                  priority
-                />
+                <div className="overflow-hidden rounded-xl">
+                  <Image
+                    alt="Setup showcase"
+                    className="aspect-video object-cover object-center scale-105 hover:scale-110 transition-transform duration-500"
+                    height={310}
+                    width={550}
+                    src="/showcase.svg"
+                    priority
+                  />
+                </div>
               </div>
             </div>
           </div>
