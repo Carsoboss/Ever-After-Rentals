@@ -1,6 +1,6 @@
 import { Header } from "./_components/header"
 import { Button } from "./_components/button"
-import { Calendar, Eye, Facebook, Flower, Gift, HeartHandshake, Package } from "lucide-react"
+import { Calendar, Eye, Facebook, Gift, HeartHandshake, Package } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 

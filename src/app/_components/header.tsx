@@ -16,9 +16,9 @@ export function Header() {
         <Link className="font-medium" href="/products">
           Products
         </Link>
-        <Link className="font-medium" href="#">
+        {/* <Link className="font-medium" href="#">
           About
-        </Link>
+        </Link> */}
         <Link className="font-medium" href="#">
           Schedule a Tour
         </Link>
