@@ -1,5 +1,6 @@
 import * as React from "react"
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export function Card({ className, ...props }: CardProps) {

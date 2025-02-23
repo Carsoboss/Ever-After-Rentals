@@ -1,5 +1,6 @@
 import * as React from "react"
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface BadgeProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export function Badge({ className, ...props }: BadgeProps) {
