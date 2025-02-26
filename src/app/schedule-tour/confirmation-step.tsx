@@ -120,12 +120,12 @@ export function ConfirmationStep({ formData, onEdit }: ConfirmationStepProps) {
           className="gap-2 bg-white border-gray-200 hover:bg-gray-100/50 min-w-[140px]" // Updated styling
           asChild
         >
-          <a href="/" className="whitespace-nowrap">
+          <Link href="/" className="whitespace-nowrap">
             {" "}
             {/* Added whitespace-nowrap */}
             <Home className="w-4 h-4" />
             Return Home
-          </a>
+          </Link>
         </Button>
         <Button
           className="bg-rose-300 hover:bg-rose-400 gap-2 min-w-[140px]" // Added consistent width
