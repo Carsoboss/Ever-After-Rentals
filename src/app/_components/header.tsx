@@ -19,13 +19,15 @@ export function Header() {
         {/* <Link className="font-medium" href="#">
           About
         </Link> */}
-        <Link className="font-medium" href="#">
+        <Link className="font-medium" href="/schedule-tour">
           Schedule a Tour
         </Link>
       </nav>
       <div className="flex gap-4">
         <Button variant="ghost">Sign in</Button>
-        <Button className="bg-rose-300 text-white hover:bg-rose-400">Get Started</Button>
+        <Link href="/schedule-tour">
+          <Button className="bg-rose-300 text-white hover:bg-rose-400">Get Started</Button>
+        </Link>
       </div>
     </header>
   )
