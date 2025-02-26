@@ -2,10 +2,9 @@
 
 import * as React from "react"
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { DayPicker } from "react-day-picker"
+import type { DayPicker } from "react-day-picker"
 
 import { cn } from "../../lib/utils"
-import { buttonVariants } from "./button"
 
 export type CalendarProps = Omit<React.ComponentProps<typeof DayPicker>, "selected" | "onSelect"> & {
   mode?: "single"
@@ -15,21 +14,21 @@ export type CalendarProps = Omit<React.ComponentProps<typeof DayPicker>, "select
   defaultMonth?: Date
   showOutsideDays?: boolean
   className?: string
-  classNames?: Record<string, string>
+  _classNames?: Record<string, string>
 }
 
 function Calendar({
-  mode = "single",
+  mode: _mode = "single",
   selected,
   onSelect,
   disabled,
-  defaultMonth,
+  defaultMonth: _defaultMonth,
   showOutsideDays = true,
   className,
-  classNames,
+  _classNames,
   ...props
 }: CalendarProps) {
-  const [currentMonth, setCurrentMonth] = React.useState(defaultMonth || new Date())
+  const [currentMonth, setCurrentMonth] = React.useState(_defaultMonth ?? new Date())
 
   const firstDayOfMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1)
   const lastDayOfMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0)

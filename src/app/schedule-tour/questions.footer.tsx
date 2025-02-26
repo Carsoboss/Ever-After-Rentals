@@ -1,5 +1,4 @@
 import { Phone, Mail } from "lucide-react"
-import Link from "next/link"
 
 export function QuestionsFooter() {
   return (

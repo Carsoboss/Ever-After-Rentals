@@ -7,7 +7,7 @@ export function AlternativeScheduling() {
         <div className="max-w-2xl mx-auto text-center">
           <h2 className="text-2xl font-semibold mb-4">Need a Different Time?</h2>
           <p className="text-muted-foreground mb-8">
-            Can't find a suitable time? Contact us directly and we'll be happy to accommodate your schedule.
+            Can&apos;t find a suitable time? Contact us directly and we&apos;ll be happy to accommodate your schedule.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
             <a

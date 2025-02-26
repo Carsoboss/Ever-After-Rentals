@@ -201,15 +201,6 @@ const rentalItems: RentalItem[] = [
   image: IMAGE_BASE_URL
 }))
 
-const categories = [
-  "Specialty Items",
-  "Table Decor",
-  "Centerpieces & Vases",
-  "Serving & Dinnerware",
-  "Decorative Elements",
-  "Candles & Lighting",
-]
-
 interface ItemSelectionStepProps {
   selectedItems: number[]
   onNext: (items: number[]) => void

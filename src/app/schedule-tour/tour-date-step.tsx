@@ -18,7 +18,6 @@ export function TourDateStep({ tourDate, tourTime, onNext, onBack }: TourDateSte
   const [selectedTime, setSelectedTime] = useState<string>(tourTime)
   const [selectedDate, setSelectedDate] = useState<Date | null>(tourDate)
 
-  // Find the first available Saturday
   const defaultMonth = useMemo(() => {
     const today = new Date()
     const minDate = new Date(today)
@@ -64,6 +63,7 @@ export function TourDateStep({ tourDate, tourTime, onNext, onBack }: TourDateSte
           selected={selectedDate}
           onSelect={setSelectedDate}
           className="rounded-md border shadow"
+          defaultMonth={defaultMonth}
           fromDate={(() => {
             const minDate = new Date()
             minDate.setDate(minDate.getDate() + 3)
