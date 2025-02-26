@@ -1,16 +1,21 @@
 /** @type {import("eslint").Linter.Config} */
-module.exports = {
-  extends: [
-    "next/core-web-vitals",
-    "plugin:@typescript-eslint/recommended",
-    "plugin:@typescript-eslint/recommended-requiring-type-checking",
-    "plugin:drizzle/recommended"
-  ],
-  parser: "@typescript-eslint/parser",
-  parserOptions: {
-    project: "./tsconfig.json"
+const config = {
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": true
   },
-  rules: {
+  "plugins": [
+    // @ts-ignore
+    "@typescript-eslint",
+    // @ts-ignore
+    "drizzle"
+  ],
+  "extends": [
+    "next/core-web-vitals",
+    "plugin:@typescript-eslint/recommended-type-checked",
+    "plugin:@typescript-eslint/stylistic-type-checked"
+  ],
+  "rules": {
     "@typescript-eslint/array-type": "off",
     "@typescript-eslint/consistent-type-definitions": "off",
     "@typescript-eslint/consistent-type-imports": [
@@ -20,7 +25,12 @@ module.exports = {
         "fixStyle": "inline-type-imports"
       }
     ],
-    "@typescript-eslint/no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }],
+    "@typescript-eslint/no-unused-vars": [
+      "warn",
+      {
+        "argsIgnorePattern": "^_"
+      }
+    ],
     "@typescript-eslint/require-await": "off",
     "@typescript-eslint/no-misused-promises": [
       "error",
@@ -33,14 +43,21 @@ module.exports = {
     "drizzle/enforce-delete-with-where": [
       "error",
       {
-        "drizzleObjectName": ["db", "ctx.db"]
+        "drizzleObjectName": [
+          "db",
+          "ctx.db"
+        ]
       }
     ],
     "drizzle/enforce-update-with-where": [
       "error",
       {
-        "drizzleObjectName": ["db", "ctx.db"]
+        "drizzleObjectName": [
+          "db",
+          "ctx.db"
+        ]
       }
     ]
   }
-};
+}
+module.exports = config;
