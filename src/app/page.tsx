@@ -34,9 +34,11 @@ export default function LandingPage() {
                 <Link href="/products">
                   <Button className="bg-rose-300 text-white hover:bg-rose-400">Browse Products</Button>
                 </Link>
-                <Button variant="outline" className="text-white border-white hover:bg-white hover:text-gray-900">
-                  Schedule a Tour
-                </Button>
+                <Link href="/schedule-tour">
+                  <Button variant="outline" className="text-white border-white hover:bg-white hover:text-gray-900">
+                    Schedule a Tour
+                  </Button>
+                </Link>
               </div>
             </div>
           </div>
