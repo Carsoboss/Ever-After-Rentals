@@ -1,19 +1,16 @@
 /** @type {import("eslint").Linter.Config} */
-const config = {
-  "parser": "@typescript-eslint/parser",
-  "parserOptions": {
-    "project": true
-  },
-  "plugins": [
-    "@typescript-eslint",
-    "drizzle"
-  ],
-  "extends": [
+module.exports = {
+  extends: [
     "next/core-web-vitals",
-    "plugin:@typescript-eslint/recommended-type-checked",
-    "plugin:@typescript-eslint/stylistic-type-checked"
+    "plugin:@typescript-eslint/recommended",
+    "plugin:@typescript-eslint/recommended-requiring-type-checking",
+    "plugin:drizzle/recommended"
   ],
-  "rules": {
+  parser: "@typescript-eslint/parser",
+  parserOptions: {
+    project: "./tsconfig.json"
+  },
+  rules: {
     "@typescript-eslint/array-type": "off",
     "@typescript-eslint/consistent-type-definitions": "off",
     "@typescript-eslint/consistent-type-imports": [
@@ -23,12 +20,7 @@ const config = {
         "fixStyle": "inline-type-imports"
       }
     ],
-    "@typescript-eslint/no-unused-vars": [
-      "warn",
-      {
-        "argsIgnorePattern": "^_"
-      }
-    ],
+    "@typescript-eslint/no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }],
     "@typescript-eslint/require-await": "off",
     "@typescript-eslint/no-misused-promises": [
       "error",
@@ -41,21 +33,14 @@ const config = {
     "drizzle/enforce-delete-with-where": [
       "error",
       {
-        "drizzleObjectName": [
-          "db",
-          "ctx.db"
-        ]
+        "drizzleObjectName": ["db", "ctx.db"]
       }
     ],
     "drizzle/enforce-update-with-where": [
       "error",
       {
-        "drizzleObjectName": [
-          "db",
-          "ctx.db"
-        ]
+        "drizzleObjectName": ["db", "ctx.db"]
       }
     ]
   }
-}
-module.exports = config;
+};
