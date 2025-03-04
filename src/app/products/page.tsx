@@ -9,6 +9,7 @@ import { Header } from ".././_components/header"
 import React from "react"
 import { api } from "~/trpc/react"
 import { LoadingSpinner } from "../_components/loading"
+import type { RentalItem } from "~/server/api/routers/rentals"
 
 // Add category display mapping with ordered categories
 const CATEGORY_ORDER = [
@@ -29,21 +30,24 @@ const CATEGORY_DISPLAY_NAMES: Record<string, string> = {
   CANDLES_LIGHTING: "Candles & Lighting",
 }
 
+interface ProcessedRentalItem extends RentalItem {
+  category: string; // This will hold the display name version of the category
+}
+
 export default function ProductsPage() {
   const [activeCategory, setActiveCategory] = React.useState("Specialty Items")
   
-  // Fetch rental items using tRPC
   const { data: rentalItems = [], isLoading } = api.rentals.getAllProducts.useQuery()
 
   // Process items to handle specialty items and categories
   const processedItems = React.useMemo(() => {
-    const items: any[] = []
+    const items: ProcessedRentalItem[] = []
     
-    rentalItems.forEach(item => {
+    rentalItems.forEach((item: RentalItem) => {
       // Add item to its original category with proper display name
       items.push({
         ...item,
-        category: CATEGORY_DISPLAY_NAMES[item.category] ?? item.category
+        category: CATEGORY_DISPLAY_NAMES[item.category as keyof typeof CATEGORY_DISPLAY_NAMES] ?? item.category
       })
       
       // If it's a specialty item, add it to Specialty Items category as well
