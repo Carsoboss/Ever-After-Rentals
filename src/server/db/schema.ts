@@ -20,7 +20,7 @@ import { relations } from "drizzle-orm";
  *
  * @see https://orm.drizzle.team/docs/goodies#multi-project-schema
  */
-export const createTable = pgTableCreator((name) => `ever-after-rentals_${name}`);
+export const createTable = pgTableCreator((name) => `${name}`);
 
 // Create the Category enum
 export const categoryEnum = pgEnum("category", [
@@ -43,6 +43,7 @@ export const rentalItems = createTable("rental_item", {
   isSpecialty: boolean("is_specialty").default(false).notNull(),
   quantity: integer("quantity").notNull(),
   value: integer("value").notNull(),
+  batchSize: integer("batch_size").default(1).notNull(),
   createdAt: timestamp("created_at", { withTimezone: true })
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
@@ -169,6 +170,7 @@ export const tourRentalItemsRelations = relations(tourRentalItems, ({ one }) => 
 //   image       String?  // URL for image
 //   isSpecialty Boolean @default(false)
 //   quantity    Int
+//   batchSize   Int
 //   value       Int
 //   createdAt   DateTime @default(now())
 //   updatedAt   DateTime @updatedAt

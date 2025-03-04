@@ -7,213 +7,79 @@ import Link from "next/link"
 import { cn } from "../../lib/utils"
 import { Header } from ".././_components/header"
 import React from "react"
+import { api } from "~/trpc/react"
+import { LoadingSpinner } from "../_components/loading"
 
-interface RentalItem {
-  id: number
-  name: string
-  category: string
-  description: string
-  price?: string
-  image: string
-  isSpecialtyItem?: boolean
+// Add category display mapping with ordered categories
+const CATEGORY_ORDER = [
+  "SPECIALTY_ITEMS",
+  "TABLE_DECOR",
+  "CENTERPIECES_VASES",
+  "SERVING_DINNERWARE",
+  "DECORATIVE_ELEMENTS",
+  "CANDLES_LIGHTING",
+] as const;
+
+const CATEGORY_DISPLAY_NAMES: Record<string, string> = {
+  SPECIALTY_ITEMS: "Specialty Items",
+  TABLE_DECOR: "Table Decor",
+  CENTERPIECES_VASES: "Centerpieces & Vases",
+  SERVING_DINNERWARE: "Serving & Dinnerware",
+  DECORATIVE_ELEMENTS: "Decorative Elements",
+  CANDLES_LIGHTING: "Candles & Lighting",
 }
-
-const IMAGE_BASE_URL = "https://kzmow9wdn4bk644umu7c.lite.vusercontent.net/placeholder.svg?height=400&width=400"
-
-const rentalItems: RentalItem[] = [
-// Specialty Items
-{
-  id: 1,
-  name: "Large Gold Photo Frames",
-  category: "Specialty Items",
-  description: "Elegant gold frames perfect for welcome signs or photo displays. Limited availability.",
-  price: "Inquire for pricing",
-  image: "/placeholder.svg?height=400&width=400",
-  isSpecialtyItem: true,
-},
-{
-  id: 2,
-  name: "'You + Me' Sign",
-  category: "Specialty Items",
-  description: "Large decorative sign perfect for photo opportunities. A stunning focal point for your venue.",
-  price: "Inquire for pricing",
-  image: "/placeholder.svg?height=400&width=400",
-  isSpecialtyItem: true,
-},
-{
-  id: 3,
-  name: "Stainless Steel Chafers",
-  category: "Specialty Items",
-  description: "Professional 4-quart capacity chafers, perfect for keeping dishes at the ideal temperature.",
-  price: "Inquire for pricing",
-  image: "/placeholder.svg?height=400&width=400",
-  isSpecialtyItem: true,
-},
-
-// Table Decor
-{
-  id: 4,
-  name: "White Rectangle Tablecloths",
-  category: "Table Decor",
-  description: '60" x 126" crisp white tablecloths perfect for rectangular tables',
-  image: "/placeholder.svg?height=400&width=400",
-},
-{
-  id: 5,
-  name: "White Round Tablecloths",
-  category: "Table Decor",
-  description: '108" round tablecloths ideal for standard round tables',
-  image: "/placeholder.svg?height=400&width=400",
-},
-{
-  id: 6,
-  name: "Elegant Table Runners",
-  category: "Table Decor",
-  description: "Available in various colors to complement your wedding theme",
-  image: "/placeholder.svg?height=400&width=400",
-},
-{
-  id: 7,
-  name: "Gold Candlestick Holders",
-  category: "Table Decor",
-  description: "Classic gold candlestick holders for elegant table settings",
-  image: "/placeholder.svg?height=400&width=400",
-},
-{
-  id: 8,
-  name: "Table Number/Picture Holders",
-  category: "Table Decor",
-  description: "Versatile holders perfect for table numbers or special photos",
-  image: "/placeholder.svg?height=400&width=400",
-},
-
-// Centerpieces & Vases
-{
-  id: 9,
-  name: "Glass Bud Vases",
-  category: "Centerpieces & Vases",
-  description: "Perfect for single stems or small floral arrangements",
-  image: "/placeholder.svg?height=400&width=400",
-},
-{
-  id: 10,
-  name: "Wooden Centerpieces",
-  category: "Centerpieces & Vases",
-  description: "11-13 inch rustic wooden centerpieces for a natural touch",
-  image: "/placeholder.svg?height=400&width=400",
-},
-{
-  id: 11,
-  name: "Glass Cylinder Vases",
-  category: "Centerpieces & Vases",
-  description: "Various sizes available for diverse floral arrangements",
-  image: "/placeholder.svg?height=400&width=400",
-},
-
-// Serving & Dinnerware
-{
-  id: 12,
-  name: "Stainless Steel Chafers",
-  category: "Serving & Dinnerware",
-  description: "4-quart capacity, perfect for keeping dishes warm",
-  price: "Inquire for pricing",
-  image: "/placeholder.svg?height=400&width=400",
-  isSpecialtyItem: true,
-},
-{
-  id: 13,
-  name: "Gold Silverware Sets",
-  category: "Serving & Dinnerware",
-  description: "Elegant gold-finished flatware for a luxurious dining experience",
-  image: "/placeholder.svg?height=400&width=400",
-},
-{
-  id: 14,
-  name: "Dinner & Dessert Plate Sets",
-  category: "Serving & Dinnerware",
-  description: "Matching dinner and dessert plates for a coordinated table setting",
-  image: "/placeholder.svg?height=400&width=400",
-},
-{
-  id: 15,
-  name: "Serving Utensils",
-  category: "Serving & Dinnerware",
-  description: "Various serving pieces to complement your dining needs",
-  image: "/placeholder.svg?height=400&width=400",
-},
-
-// Decorative Elements
-{
-  id: 16,
-  name: "Large Gold Photo Frames",
-  category: "Decorative Elements",
-  description: "Elegant gold frames perfect for welcome signs or photo displays",
-  price: "Inquire for pricing",
-  image: "/placeholder.svg?height=400&width=400",
-  isSpecialtyItem: true,
-},
-{
-  id: 17,
-  name: "'You + Me' Sign",
-  category: "Decorative Elements",
-  description: "Large decorative sign perfect for photo opportunities",
-  price: "Inquire for pricing",
-  image: "/placeholder.svg?height=400&width=400",
-  isSpecialtyItem: true,
-},
-{
-  id: 18,
-  name: "Artificial Eucalyptus Collection",
-  category: "Decorative Elements",
-  description: "Mixed eucalyptus leaves and stems for natural-looking arrangements",
-  image: "/placeholder.svg?height=400&width=400",
-},
-{
-  id: 19,
-  name: "Artificial Green Garlands",
-  category: "Decorative Elements",
-  description: "Lush green garlands for tables or venue decoration",
-  image: "/placeholder.svg?height=400&width=400",
-},
-
-// Candles & Lighting
-{
-  id: 20,
-  name: "White Pillar Candles",
-  category: "Candles & Lighting",
-  description: "10-inch unscented white candles for candlestick holders",
-  image: "/placeholder.svg?height=400&width=400",
-},
-{
-  id: 21,
-  name: "Tea Light Holders",
-  category: "Candles & Lighting",
-  description: "Glass tea light holders for ambient lighting",
-  image: "/placeholder.svg?height=400&width=400",
-},
-{
-  id: 22,
-  name: "Floating Candles",
-  category: "Candles & Lighting",
-  description: "Perfect for water features and cylinder vases",
-  image: "/placeholder.svg?height=400&width=400",
-},
-].map(item => ({
-  ...item,
-  image: IMAGE_BASE_URL
-}))
-
-const categories = [
-  "Specialty Items",
-  "Table Decor",
-  "Centerpieces & Vases",
-  "Serving & Dinnerware",
-  "Decorative Elements",
-  "Candles & Lighting",
-]
 
 export default function ProductsPage() {
   const [activeCategory, setActiveCategory] = React.useState("Specialty Items")
+  
+  // Fetch rental items using tRPC
+  const { data: rentalItems = [], isLoading } = api.rentals.getAllProducts.useQuery()
+
+  // Process items to handle specialty items and categories
+  const processedItems = React.useMemo(() => {
+    const items: any[] = []
+    
+    rentalItems.forEach(item => {
+      // Add item to its original category with proper display name
+      items.push({
+        ...item,
+        category: CATEGORY_DISPLAY_NAMES[item.category] ?? item.category
+      })
+      
+      // If it's a specialty item, add it to Specialty Items category as well
+      if (item.isSpecialty) {
+        items.push({
+          ...item,
+          category: "Specialty Items"
+        })
+      }
+    })
+    
+    return items
+  }, [rentalItems])
+
+  // Modified categories extraction to maintain order
+  const categories = React.useMemo(() => {
+    const uniqueCategories = [...new Set(processedItems.map(item => item.category))]
+    return uniqueCategories.sort((a, b) => {
+      // Ensure "Specialty Items" is always first
+      if (a === "Specialty Items") return -1;
+      if (b === "Specialty Items") return 1;
+      // For other categories, maintain the order from CATEGORY_ORDER
+      const aIndex = CATEGORY_ORDER.findIndex(cat => CATEGORY_DISPLAY_NAMES[cat] === a);
+      const bIndex = CATEGORY_ORDER.findIndex(cat => CATEGORY_DISPLAY_NAMES[cat] === b);
+      return aIndex - bIndex;
+    });
+  }, [processedItems])
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-rose-50 to-white pt-16">
+        <Header />
+        <LoadingSpinner />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-rose-50 to-white pt-16">
@@ -258,10 +124,10 @@ export default function ProductsPage() {
 
         {/* Items Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 mb-24">
-          {rentalItems
+          {processedItems
             .filter((item) => item.category === activeCategory)
             .map((item) => (
-              <Link href={`/rentals/${item.id}`} key={item.id} className="group">
+              <Link href={`/rentals/${item.name}`} key={`${item.name}-${item.category}`} className="group">
                 <Card className="overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 bg-white/50 backdrop-blur-sm">
                   <div className="aspect-square relative overflow-hidden">
                     <Image
@@ -270,7 +136,7 @@ export default function ProductsPage() {
                       fill
                       className="object-cover transition-transform duration-300 group-hover:scale-105"
                     />
-                    {item.isSpecialtyItem && (
+                    {item.isSpecialty && (
                       <div className="absolute top-2 right-2">
                         <Badge className="bg-rose-300 text-white border-none">Specialty Item</Badge>
                       </div>
@@ -279,7 +145,11 @@ export default function ProductsPage() {
                   <CardContent className="p-6">
                     <h3 className="font-semibold text-lg mb-2 line-clamp-1">{item.name}</h3>
                     <p className="text-sm text-muted-foreground line-clamp-2 mb-3">{item.description}</p>
-                    {item.price && <p className="text-rose-500 font-medium">{item.price}</p>}
+                    {item.price && (
+                      <p className="text-rose-500 font-medium">
+                        Inquire for pricing
+                      </p>
+                    )}
                   </CardContent>
                 </Card>
               </Link>

@@ -1,0 +1,77 @@
+{
+  "id": "675eac8a-4cf9-4147-a8f0-087934014049",
+  "prevId": "858a25ec-9ec6-4401-969d-e85ce296f1e5",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.{name}": {
+      "name": "{name}",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "tour_date_time": {
+          "name": "tour_date_time",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "wedding_date_time": {
+          "name": "wedding_date_time",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "CURRENT_TIMESTAMP"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    }
+  },
+  "enums": {
+    "public.category": {
+      "name": "category",
+      "schema": "public",
+      "values": [
+        "SPECIALTY_ITEMS",
+        "TABLE_DECOR",
+        "CENTERPIECES_VASES",
+        "SERVING_DINNERWARE",
+        "DECORATIVE_ELEMENTS",
+        "CANDLES_LIGHTING"
+      ]
+    }
+  },
+  "schemas": {},
+  "sequences": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

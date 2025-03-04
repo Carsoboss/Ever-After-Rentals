@@ -1,0 +1,1 @@
+ALTER TABLE "rental_item" ADD COLUMN "batch_size" integer DEFAULT 1 NOT NULL;
