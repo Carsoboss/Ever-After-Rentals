@@ -26,7 +26,7 @@ function Calendar({
   showOutsideDays = true,
   className,
   _classNames,
-  ...props
+  ..._props
 }: CalendarProps) {
   const [currentMonth, setCurrentMonth] = React.useState(_defaultMonth ?? new Date())
 

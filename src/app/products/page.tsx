@@ -47,7 +47,7 @@ export default function ProductsPage() {
       // Add item to its original category with proper display name
       items.push({
         ...item,
-        category: CATEGORY_DISPLAY_NAMES[item.category as keyof typeof CATEGORY_DISPLAY_NAMES] ?? item.category
+        category: CATEGORY_DISPLAY_NAMES[item.category] ?? item.category
       })
       
       // If it's a specialty item, add it to Specialty Items category as well

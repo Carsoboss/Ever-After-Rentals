@@ -25,6 +25,6 @@ export const rentalsRouter = createTRPCRouter({
       },
     });
 
-    return items as RentalItem[];
+    return items.map(item => rentalItemSchema.parse(item));
   }),
 });
