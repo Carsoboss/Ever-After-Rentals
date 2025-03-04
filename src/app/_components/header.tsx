@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { Flower } from "lucide-react"
 import { Button } from "./button"
+import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs"
 
 export function Header() {
   return (
@@ -23,11 +24,21 @@ export function Header() {
           Schedule a Tour
         </Link>
       </nav>
-      <div className="flex gap-4">
-        <Button variant="ghost">Sign in</Button>
-        <Link href="/schedule-tour">
-          <Button className="bg-rose-300 text-white hover:bg-rose-400">Get Started</Button>
-        </Link>
+      <div className="flex gap-4 items-center">
+        <SignedOut>
+          <SignInButton>
+            <Button variant="ghost">Sign in</Button>
+          </SignInButton>
+          <Link href="/schedule-tour">
+            <Button className="bg-rose-300 text-white hover:bg-rose-400">Get Started</Button>
+          </Link>
+        </SignedOut>
+        <SignedIn>
+          <Link href="/schedule-tour">
+            <Button className="bg-rose-300 text-white hover:bg-rose-400 mr-4">Schedule Tour</Button>
+          </Link>
+          <UserButton/>
+        </SignedIn>
       </div>
     </header>
   )

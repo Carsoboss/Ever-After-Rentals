@@ -6,7 +6,7 @@ import { Button } from "../_components/button"
 import { Card, CardContent } from "../_components/card"
 import { Badge } from "../_components/badge"
 import { cn } from "../../lib/utils"
-
+import React from "react"
 interface RentalItem {
   id: number
   name: string

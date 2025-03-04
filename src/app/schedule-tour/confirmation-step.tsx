@@ -5,7 +5,7 @@ import { Button } from "../_components/button"
 import { Card } from "../_components/card"
 import { CheckCircle, Edit2, CalendarIcon, Home } from "lucide-react"
 import Link from "next/link"
-
+import React from "react"
 const VENUE_ADDRESS = "1048 E 420 S, Provo, UT 84606"
 
 interface ConfirmationStepProps {

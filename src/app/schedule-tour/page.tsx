@@ -6,6 +6,7 @@ import { ItemSelectionStep } from "./item-selection-step"
 import { TourDateStep } from "./tour-date-step"
 import { ConfirmationStep } from "./confirmation-step"
 import { AlternativeScheduling } from "./alternative-scheduling"
+import React from "react"
 
 interface EditMode {
   isEditing: boolean

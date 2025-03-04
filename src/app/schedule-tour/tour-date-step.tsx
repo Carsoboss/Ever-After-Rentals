@@ -6,6 +6,7 @@ import { Button } from "../_components/button"
 import { Card } from "../_components/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../_components/select"
 import { useState, useMemo } from "react"
+import React from "react"
 
 interface TourDateStepProps {
   tourDate: Date | null

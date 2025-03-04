@@ -1,5 +1,5 @@
 import { Phone, Mail } from "lucide-react"
-
+import React from "react"
 export function AlternativeScheduling() {
   return (
     <div className="bg-rose-50/50 py-12 border-t">
