@@ -5,7 +5,7 @@ const rentalItemSchema = z.object({
   name: z.string(),
   category: z.string(),
   description: z.string(),
-  price: z.number().optional(),
+  price: z.number().nullable().optional(),
   image: z.string(),
   isSpecialty: z.boolean(),
 });
