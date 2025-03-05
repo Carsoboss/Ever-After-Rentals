@@ -9,7 +9,7 @@ import { Header } from ".././_components/header"
 import React from "react"
 import { api } from "~/trpc/react"
 import { LoadingSpinner } from "../_components/loading"
-import type { RentalItem } from "~/server/api/routers/rentals"
+import type { RentalItem } from "~/server/api/routers/items"
 
 // Add category display mapping with ordered categories
 const CATEGORY_ORDER = [

@@ -12,7 +12,7 @@ const rentalItemSchema = z.object({
 
 export type RentalItem = z.infer<typeof rentalItemSchema>;
 
-export const rentalsRouter = createTRPCRouter({
+export const itemsRouter = createTRPCRouter({
   getAllProducts: publicProcedure.query(async ({ ctx }): Promise<RentalItem[]> => {
     const items = await ctx.db.query.rentalItems.findMany({
       columns: {

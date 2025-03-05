@@ -18,7 +18,7 @@ export default function ScheduleTour() {
   const [editMode, setEditMode] = useState<EditMode>({ isEditing: false, returnToStep: 4 })
   const [formData, setFormData] = useState({
     weddingDate: null as Date | null,
-    selectedItems: [] as number[],
+    selectedItems: [] as string[],
     tourDate: null as Date | null,
     tourTime: "" as string,
   })
@@ -85,6 +85,7 @@ export default function ScheduleTour() {
             <TourDateStep
               tourDate={formData.tourDate}
               tourTime={formData.tourTime}
+              weddingDate={formData.weddingDate}
               onNext={(date, time) => {
                 updateFormData({ tourDate: date, tourTime: time })
                 nextStep()

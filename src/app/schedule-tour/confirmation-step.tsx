@@ -11,7 +11,7 @@ const VENUE_ADDRESS = "1048 E 420 S, Provo, UT 84606"
 interface ConfirmationStepProps {
   formData: {
     weddingDate: Date | null
-    selectedItems: number[]
+    selectedItems: string[]
     tourDate: Date | null
     tourTime: string
   }
