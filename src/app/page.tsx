@@ -1,4 +1,5 @@
 import { Header } from "./_components/header"
+import { Footer } from "./_components/footer"
 import { Button } from "./_components/button"
 import { Calendar, Eye, Gift, HeartHandshake, Package, Phone, Mail } from "lucide-react"
 import Link from "next/link"
@@ -128,41 +129,7 @@ export default function LandingPage() {
           </div>
         </section>
       </main>
-      <footer className="flex flex-col gap-2 sm:flex-row py-6 w-full shrink-0 items-center px-4 md:px-6 border-t">
-        <p className="text-xs text-gray-500 dark:text-gray-400">© 2025 Ever After Rentals. All rights reserved.</p>
-        <nav className="sm:ml-auto flex gap-6 items-center">
-          <div className="flex items-center gap-1 text-muted-foreground">
-            <span className="text-xs">Questions? Contact us</span>
-          </div>
-          <a href="tel:+18166803252" className="flex items-center gap-1 text-muted-foreground hover:text-foreground">
-            <Phone className="h-4 w-4" />
-            <span className="text-xs">(816) 680-3252</span>
-          </a>
-          <a href="mailto:vallennttinne.mj@gmail.com" className="flex items-center gap-1 text-muted-foreground hover:text-foreground">
-            <Mail className="h-4 w-4" />
-            <span className="text-xs">vallennttinne.mj@gmail.com</span>
-          </a>
-          <a 
-            href="https://www.facebook.com/profile.php?id=61571500715684" 
-            target="_blank" 
-            rel="noopener noreferrer" 
-            className="text-muted-foreground hover:text-foreground"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="h-4 w-4"
-            >
-              <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
-            </svg>
-          </a>
-        </nav>
-      </footer>
+      <Footer />
     </div>
   )
 }

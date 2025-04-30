@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "~/server/api/trpc";
 import { TRPCError } from "@trpc/server";
-import { and, between, eq, gt, lt } from "drizzle-orm";
+import { and, between, eq, gt, lt, desc, ne } from "drizzle-orm";
 import { tours, totalCheckouts, tourRentalItems, rentalItems } from "~/server/db/schema";
 
 // Minimum time between tours in milliseconds (1 hour)
@@ -24,7 +24,133 @@ let weddingDatesCache: {
 // Cache duration - 1 hour
 const CACHE_DURATION = 60 * 60 * 1000;
 
+// Shared validation logic
+const validateTourDate = (tourDateTime: Date, weddingDateTime: Date, existingTourId?: string) => {
+  const now = new Date();
+
+  // Validate tour date is in the future
+  if (tourDateTime < now) {
+    throw new TRPCError({
+      code: "BAD_REQUEST",
+      message: "Tour date must be in the future",
+    });
+  }
+
+  // Validate wedding date is at least 2 weeks after tour date
+  const tourToWeddingGap = weddingDateTime.getTime() - tourDateTime.getTime();
+  if (tourToWeddingGap < MIN_TOUR_TO_WEDDING_GAP) {
+    throw new TRPCError({
+      code: "BAD_REQUEST",
+      message: "Wedding date must be at least 2 weeks after the tour date",
+    });
+  }
+
+  // Validate that tour is on a Saturday
+  if (tourDateTime.getDay() !== 6) { // 6 represents Saturday (0 = Sunday, 1 = Monday, etc.)
+    throw new TRPCError({
+      code: "BAD_REQUEST",
+      message: "Tours are only available on Saturdays",
+    });
+  }
+
+  // Validate tour time is between 9 AM and 5 PM
+  const hour = tourDateTime.getHours();
+  if (hour < BUSINESS_START_HOUR || hour >= BUSINESS_END_HOUR) {
+    throw new TRPCError({
+      code: "BAD_REQUEST",
+      message: "Tours are only available between 9 AM and 5 PM",
+    });
+  }
+};
+
+// Check for conflicting tours
+const checkForConflictingTours = async (ctx: any, tourDateTime: Date, existingTourId?: string) => {
+  // Check if tour time conflicts with other tours (within 1 hour)
+  const tourStartWindow = new Date(tourDateTime.getTime() - MIN_TOUR_GAP);
+  const tourEndWindow = new Date(tourDateTime.getTime() + MIN_TOUR_GAP);
+
+  // Construct the where clause
+  let whereClause;
+  if (existingTourId) {
+    // When updating, exclude the user's own tour
+    whereClause = and(
+      gt(tours.tourDateTime, tourStartWindow),
+      lt(tours.tourDateTime, tourEndWindow),
+      ne(tours.id, existingTourId)
+    );
+  } else {
+    // For new tours
+    whereClause = and(
+      gt(tours.tourDateTime, tourStartWindow),
+      lt(tours.tourDateTime, tourEndWindow)
+    );
+  }
+
+  const conflictingTours = await ctx.db.query.tours.findMany({
+    where: whereClause
+  });
+
+  if (conflictingTours.length > 0) {
+    throw new TRPCError({
+      code: "BAD_REQUEST",
+      message: "Tour time conflicts with another tour",
+    });
+  }
+};
+
+// Function to save tour-rental items relationship
+const saveRentalItems = async (ctx: any, tourId: string, selectedItemIds: string[]) => {
+  if (selectedItemIds.length > 0) {
+    await ctx.db.insert(tourRentalItems).values(
+      selectedItemIds.map(itemId => ({
+        tourId: tourId,
+        rentalItemId: itemId,
+      }))
+    );
+  }
+};
+
+// Define the types for the tour item relationships
+interface TourRentalItem {
+  rentalItem: {
+    id: string;
+    name: string;
+    category: string;
+    description: string;
+    price: number | null;
+    image: string | null;
+    isSpecialty: boolean;
+    [key: string]: any;
+  };
+  [key: string]: any;
+}
+
 export const toursRouter = createTRPCRouter({
+  // Get user's scheduled tour if one exists
+  getUserTour: protectedProcedure
+    .query(async ({ ctx }) => {
+      const userTour = await ctx.db.query.tours.findFirst({
+        where: eq(tours.userId, ctx.userId),
+        orderBy: (tours, { desc }) => [desc(tours.tourDateTime)],
+        with: {
+          rentalItems: {
+            with: {
+              rentalItem: true,
+            }
+          }
+        }
+      });
+
+      if (!userTour) {
+        return null;
+      }
+
+      return {
+        ...userTour,
+        rentalItems: userTour.rentalItems.map(item => item.rentalItem)
+      };
+    }),
+
   getAvailableWeddingDates: protectedProcedure
     .input(z.object({
       startDate: z.date(),
@@ -94,70 +220,168 @@ export const toursRouter = createTRPCRouter({
     .input(z.object({
       tourDateTime: z.date(),
       weddingDateTime: z.date(),
+      selectedItemIds: z.array(z.string()).optional(),
     }))
     .mutation(async ({ ctx, input }) => {
-      const now = new Date();
-
-      // Validate tour date is in the future
-      if (input.tourDateTime < now) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Tour date must be in the future",
-        });
-      }
-
-      // Validate wedding date is at least 2 weeks after tour date
-      const tourToWeddingGap = input.weddingDateTime.getTime() - input.tourDateTime.getTime();
-      if (tourToWeddingGap < MIN_TOUR_TO_WEDDING_GAP) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Wedding date must be at least 2 weeks after the tour date",
-        });
-      }
-
-      // Validate that tour is on a Saturday
-      if (input.tourDateTime.getDay() !== 6) { // 6 represents Saturday (0 = Sunday, 1 = Monday, etc.)
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Tours are only available on Saturdays",
-        });
-      }
-
-      // Validate tour time is between 9 AM and 5 PM
-      const hour = input.tourDateTime.getHours();
-      if (hour < BUSINESS_START_HOUR || hour >= BUSINESS_END_HOUR) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Tours are only available between 9 AM and 5 PM",
-        });
-      }
-
-      // Check if tour time conflicts with other tours (within 1 hour)
-      const tourStartWindow = new Date(input.tourDateTime.getTime() - MIN_TOUR_GAP);
-      const tourEndWindow = new Date(input.tourDateTime.getTime() + MIN_TOUR_GAP);
-
-      const conflictingTours = await ctx.db.query.tours.findMany({
-        where: and(
-          gt(tours.tourDateTime, tourStartWindow),
-          lt(tours.tourDateTime, tourEndWindow)
-        ),
+      // Check if the user already has a tour
+      const existingTour = await ctx.db.query.tours.findFirst({
+        where: eq(tours.userId, ctx.userId),
+        orderBy: (tours, { desc }) => [desc(tours.tourDateTime)],
       });
 
-      if (conflictingTours.length > 0) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Tour time conflicts with another tour",
+      // If tour exists, call updateTour instead of creating a new one
+      if (existingTour) {
+        // Use the update mutation logic
+        await ctx.db.update(tours).set({
+          tourDateTime: input.tourDateTime,
+          weddingDateTime: input.weddingDateTime,
+          updatedAt: new Date(),
+        }).where(eq(tours.id, existingTour.id));
+
+        // Delete existing tour rental items
+        await ctx.db.delete(tourRentalItems).where(eq(tourRentalItems.tourId, existingTour.id));
+
+        // Add new selected items
+        if (input.selectedItemIds && input.selectedItemIds.length > 0) {
+          await saveRentalItems(ctx, existingTour.id, input.selectedItemIds);
+        }
+
+        // Return the updated tour
+        const updatedTour = await ctx.db.query.tours.findFirst({
+          where: eq(tours.id, existingTour.id),
+          with: {
+            rentalItems: {
+              with: {
+                rentalItem: true,
+              }
+            }
+          }
         });
+
+        if (!updatedTour) {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Failed to retrieve updated tour",
+          });
+        }
+
+        return {
+          ...updatedTour,
+          rentalItems: updatedTour.rentalItems.map((item: TourRentalItem) => item.rentalItem)
+        };
       }
 
+      // If no existing tour, create a new one
+      // Run validations
+      validateTourDate(input.tourDateTime, input.weddingDateTime);
+      await checkForConflictingTours(ctx, input.tourDateTime);
+
       // Create the tour
-      const [tour] = await ctx.db.insert(tours).values({
+      const result = await ctx.db.insert(tours).values({
         userId: ctx.userId,
         tourDateTime: input.tourDateTime,
         weddingDateTime: input.weddingDateTime,
       }).returning();
 
-      return tour;
+      const tour = result[0];
+      if (!tour) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to create tour",
+        });
+      }
+
+      // If there are selected items, save them to the tour_rental_items table
+      if (input.selectedItemIds && input.selectedItemIds.length > 0) {
+        await saveRentalItems(ctx, tour.id, input.selectedItemIds);
+      }
+
+      // Return the complete tour with items
+      const createdTour = await ctx.db.query.tours.findFirst({
+        where: eq(tours.id, tour.id),
+        with: {
+          rentalItems: {
+            with: {
+              rentalItem: true,
+            }
+          }
+        }
+      });
+      
+      if (!createdTour) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to retrieve created tour",
+        });
+      }
+      
+      return {
+        ...createdTour,
+        rentalItems: createdTour.rentalItems.map((item: TourRentalItem) => item.rentalItem)
+      };
+    }),
+
+  // Update an existing tour
+  updateTour: protectedProcedure
+    .input(z.object({
+      tourDateTime: z.date(),
+      weddingDateTime: z.date(),
+      selectedItemIds: z.array(z.string()),
+    }))
+    .mutation(async ({ ctx, input }) => {
+      // Get the user's existing tour
+      const existingTour = await ctx.db.query.tours.findFirst({
+        where: eq(tours.userId, ctx.userId),
+        orderBy: (tours, { desc }) => [desc(tours.tourDateTime)],
+      });
+
+      if (!existingTour) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "No existing tour found to update",
+        });
+      }
+
+      // Run validations
+      validateTourDate(input.tourDateTime, input.weddingDateTime, existingTour.id);
+      await checkForConflictingTours(ctx, input.tourDateTime, existingTour.id);
+
+      // Update the tour
+      await ctx.db.update(tours).set({
+        tourDateTime: input.tourDateTime,
+        weddingDateTime: input.weddingDateTime,
+        updatedAt: new Date(),
+      }).where(eq(tours.id, existingTour.id));
+
+      // Delete existing tour rental items
+      await ctx.db.delete(tourRentalItems).where(eq(tourRentalItems.tourId, existingTour.id));
+
+      // Add new selected items
+      await saveRentalItems(ctx, existingTour.id, input.selectedItemIds);
+
+      // Get the updated tour with rental items
+      const updatedTour = await ctx.db.query.tours.findFirst({
+        where: eq(tours.id, existingTour.id),
+        with: {
+          rentalItems: {
+            with: {
+              rentalItem: true,
+            }
+          }
+        }
+      });
+
+      if (!updatedTour) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to retrieve updated tour",
+        });
+      }
+
+      return {
+        ...updatedTour,
+        rentalItems: updatedTour.rentalItems.map((item: TourRentalItem) => item.rentalItem)
+      };
     }),
 
   // Get available tour times

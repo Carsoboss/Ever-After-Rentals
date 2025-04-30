@@ -213,7 +213,7 @@ export function TourDateStep({ tourDate, tourTime, weddingDate, onNext, onBack }
           onClick={handleNext}
           disabled={!selectedDate || !selectedTime || isLoadingSlots}
         >
-          Next
+          Schedule Tour
         </Button>
       </div>
     </Card>

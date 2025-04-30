@@ -17,6 +17,9 @@ export function Header() {
         <Link className="font-medium" href="/products">
           Products
         </Link>
+        <Link className="font-medium" href="/pricing">
+          Pricing
+        </Link>
         {/* <Link className="font-medium" href="#">
           About
         </Link> */}
