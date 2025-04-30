@@ -23,6 +23,12 @@ const TODAY = roundToDay(new Date())
 const MIN_WEDDING_DATE = roundToDay(new Date(TODAY.getTime() + 21 * 24 * 60 * 60 * 1000))
 const ONE_YEAR_FROM_NOW = roundToDay(new Date(TODAY.getTime() + 365 * 24 * 60 * 60 * 1000))
 
+// Update the interface to match the API response
+interface UnavailablePeriod {
+  startDate?: string;
+  endDate?: string;
+}
+
 interface WeddingDateStepProps {
   weddingDate: Date | null
   onNext: (date: Date) => void
@@ -43,8 +49,8 @@ export function WeddingDateStep({ weddingDate, onNext }: WeddingDateStepProps) {
     if (selectedDate) {
       return selectedDate;
     }
-    // Otherwise use the minimum wedding date
-    return data?.minWeddingDate || MIN_WEDDING_DATE;
+    // Convert minWeddingDate string to Date if it exists, otherwise use MIN_WEDDING_DATE
+    return data?.minWeddingDate ? new Date(data.minWeddingDate) : MIN_WEDDING_DATE;
   }, [selectedDate, data?.minWeddingDate]);
 
   // Function to check if a date is disabled
@@ -55,7 +61,10 @@ export function WeddingDateStep({ weddingDate, onNext }: WeddingDateStepProps) {
     if (date < MIN_WEDDING_DATE) return true
 
     // Check if date falls within any unavailable period
-    return data.unavailablePeriods.some(period => {
+    return data.unavailablePeriods.some((period) => {
+      // Only check if both dates exist
+      if (!period.startDate || !period.endDate) return false
+      
       const periodStart = new Date(period.startDate)
       const periodEnd = new Date(period.endDate)
       return date >= periodStart && date <= periodEnd
@@ -87,7 +96,7 @@ export function WeddingDateStep({ weddingDate, onNext }: WeddingDateStepProps) {
               className="rounded-md border shadow"
               disabled={isDateDisabled}
               defaultMonth={initialMonth}
-              fromDate={data?.minWeddingDate}
+              fromDate={data?.minWeddingDate ? new Date(data.minWeddingDate) : undefined}
             />
           </div>
 
