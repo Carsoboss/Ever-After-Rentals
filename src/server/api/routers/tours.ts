@@ -235,7 +235,6 @@ export const toursRouter = createTRPCRouter({
         await ctx.db.update(tours).set({
           tourDateTime: input.tourDateTime,
           weddingDateTime: input.weddingDateTime,
-          updatedAt: new Date(),
         }).where(eq(tours.id, existingTour.id));
 
         // Delete existing tour rental items
@@ -350,7 +349,6 @@ export const toursRouter = createTRPCRouter({
       await ctx.db.update(tours).set({
         tourDateTime: input.tourDateTime,
         weddingDateTime: input.weddingDateTime,
-        updatedAt: new Date(),
       }).where(eq(tours.id, existingTour.id));
 
       // Delete existing tour rental items
