@@ -33,10 +33,10 @@ export default function ScheduleTour() {
   useEffect(() => {
     if (existingTour) {
       setFormData({
-        weddingDate: existingTour.weddingDateTime,
+        weddingDate: new Date(existingTour.weddingDateTime),
         selectedItems: existingTour.rentalItems.map(item => item.id),
-        tourDate: existingTour.tourDateTime,
-        tourTime: `${existingTour.tourDateTime.getHours()}:00`,
+        tourDate: new Date(existingTour.tourDateTime),
+        tourTime: `${new Date(existingTour.tourDateTime).getHours()}:00`,
       })
       setStep(4) // Go directly to confirmation step
     }
