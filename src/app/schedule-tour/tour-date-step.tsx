@@ -30,6 +30,12 @@ interface TourDateStepProps {
   onBack: () => void
 }
 
+interface TourSlotsResponse {
+  bookedSlots?: (Date | string)[];
+  availableSlots?: string[];
+  error?: string;
+}
+
 export function TourDateStep({ tourDate, tourTime, weddingDate, onNext, onBack }: TourDateStepProps) {
   const [selectedDate, setSelectedDate] = useState<Date | null>(tourDate)
   const [selectedTime, setSelectedTime] = useState<string>("")
@@ -69,7 +75,7 @@ export function TourDateStep({ tourDate, tourTime, weddingDate, onNext, onBack }
   }, [selectedDate, earliestTourDate]);
 
   // Query available tour times when a date is selected
-  const { data: tourSlots, isLoading: isLoadingSlots } = api.tours.getAvailableTourTimes.useQuery(
+  const { data: tourSlots, isLoading: isLoadingSlots } = api.tours.getAvailableTourTimes.useQuery<TourSlotsResponse>(
     { date: selectedDate ?? THREE_DAYS_FROM_NOW },
     { 
       enabled: !!selectedDate,
@@ -79,7 +85,8 @@ export function TourDateStep({ tourDate, tourTime, weddingDate, onNext, onBack }
 
   // Create array of available time slots
   const timeSlots = useMemo(() => {
-    if (!tourSlots || !tourSlots.bookedSlots) return []
+    // First check if tourSlots exists and has the correct shape
+    if (!tourSlots || 'error' in tourSlots || !('bookedSlots' in tourSlots)) return []
 
     const allSlots = Array.from({ length: 9 }, (_, i) => {
       const hour = i + 9
@@ -89,7 +96,13 @@ export function TourDateStep({ tourDate, tourTime, weddingDate, onNext, onBack }
       }
     })
 
-    const bookedHours = new Set(tourSlots.bookedSlots.map(date => date.getHours()))
+    // Make sure to parse the dates from strings if they come as strings
+    const bookedHours = new Set(
+      tourSlots.bookedSlots?.map(slot => 
+        typeof slot === 'string' ? new Date(slot).getHours() : slot.getHours()
+      ) ?? []
+    )
+    
     return allSlots.filter(slot => !bookedHours.has(parseInt(slot.value)))
   }, [tourSlots])
 
