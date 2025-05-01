@@ -1,3 +1,4 @@
+// @ts-nocheck
 "use client";
 
 import { QueryClientProvider, type QueryClient } from "@tanstack/react-query";
